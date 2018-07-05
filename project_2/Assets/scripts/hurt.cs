@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class hurt : MonoBehaviour
 {
     public int health = 4;
     bool check = false;
     public int score = 0;
+
+    public SwitchLight lightClass = new SwitchLight();
 
     // Use this for initialization
     void Start()
@@ -22,9 +25,15 @@ public class hurt : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (health < 1)
+        Debug.Log("collided");
+        if (other.gameObject.tag == "light")
         {
-            transform.position = new Vector3(25, 0.5f, -25);
+            Debug.Log("Collided with light");
+            lightClass.SetLight2On();
+        }
+        else if (health < 1)
+        {
+            transform.position = new Vector3(0.4f, 0.7f, -125);
             health = 4;
         }
     }
@@ -39,5 +48,10 @@ public class hurt : MonoBehaviour
     void IncreaseScore()
     {
         score++;
+        if (score == 10000)
+        {
+            Debug.Log("scene transition?");
+            SceneManager.LoadScene("level 2");
+        }
     }
 }
