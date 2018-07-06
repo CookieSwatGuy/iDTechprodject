@@ -5,16 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class hurt : MonoBehaviour
 {
-    public int health = 4;
+    public int health = 3;
     bool check = false;
     public int score = 0;
+
+    Scene currentScene;
 
     public SwitchLight lightClass = new SwitchLight();
 
     // Use this for initialization
     void Start()
     {
-        InvokeRepeating("IncreaseScore", 10, 1.0f);
+        currentScene = SceneManager.GetActiveScene();
+       
     }
 
     // Update is called once per frame
@@ -22,36 +25,51 @@ public class hurt : MonoBehaviour
     {
 
     }
-
+    void OnTriggerStay(Collider other)
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (other.gameObject.tag == "light")
+            {
+                Debug.Log("Collided with light");
+                lightClass.SetLight2On();
+            }
+        }
+    }
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("collided");
-        if (other.gameObject.tag == "light")
+        if (health < 1)
         {
-            Debug.Log("Collided with light");
-            lightClass.SetLight2On();
-        }
-        else if (health < 1)
-        {
-            transform.position = new Vector3(0.4f, 0.7f, -125);
+            if (currentScene.name == "level 1")
+            {
+                transform.position = new Vector3(24.3f, 0.925f, -24.387f);
+            }
+            else if (currentScene.name == "level 2")
+            {
+                transform.position = new Vector3(0.4f, 0.7f, -125);
+            }
             health = 4;
         }
+        {
+            if (other.gameObject.tag == "button")
+            {
+                score++;
+                if (score == 2)
+                {
+                    Debug.Log("scene transition?");
+                    SceneManager.LoadScene("level 2");
+                }
+            }
+        }
     }
+
     private void OnTriggerExit(Collider other)
     {
-        if (health > 0)
+        if (health > 0 && other.gameObject.tag != "button")
         {
             health--;
 
-        }
-    }
-    void IncreaseScore()
-    {
-        score++;
-        if (score == 10000)
-        {
-            Debug.Log("scene transition?");
-            SceneManager.LoadScene("level 2");
         }
     }
 }
